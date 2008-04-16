@@ -11,6 +11,7 @@ my $builder = Module::Build->new(
         'Test::More'         => 0,
         'version'            => 0,
         'Test::Perl::Critic' => 0,
+        'Class::Accessor'    => 0,
         'LWP::UserAgent'     => 0,
         'HTTP::Request'      => 0,
         'Data::Average'      => 0,

@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use Carp;
 
-use version; our $VERSION = qv('0.0.1');
+use version; our $VERSION = qv('0.0.2');
 
 use LWP::UserAgent;
 use HTTP::Request;
@@ -295,9 +295,14 @@ WebService::Kaolabo - This module call Kaolabo API (http://kaolabo.com/).
                                        target_file  => 'sample.jpg',
                                        apikey       => 'hogefuga'
                                     });
+
+  unless ( $kaolab->scale( xpixels => 50, ypixels => 50, type => 'max') ) {
+      warn "Failed scale $WebService::Kaolabo::errstr";
+  }
+
   my $res = $kaolab->access();
-  unless ( $res->is_success ) {
-      warn 'Failed access ';
+  if ( $res->is_success ) {
+      warn "Success ";
   }
   
   #$kaolab->unface_area();
@@ -380,6 +385,12 @@ Return average width of all faces.
 =item ave_face_height
 
 Return average height of all faces.
+
+=item errstr 
+
+Error message.
+
+  warn "$WebService::Kaolabo::errstr";
 
 =back
 
