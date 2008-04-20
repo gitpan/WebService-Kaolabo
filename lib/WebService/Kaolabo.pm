@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use Carp;
 
-use version; our $VERSION = qv('0.0.2');
+use version; our $VERSION = qv('0.0.3');
 
 use LWP::UserAgent;
 use HTTP::Request;
@@ -123,7 +123,6 @@ sub _parser {
     my $face_data  = [];
     my $ave_width  = Data::Average->new;
     my $ave_height = Data::Average->new;
-
     while ( $content =~ s/<face(.+?)<\/face// ) {
         my $node = $1;
         my ( $height, $score, $width, $face_x, $face_y, $left_eye_x, $left_eye_y, $right_eye_x, $right_eye_y)
@@ -142,6 +141,12 @@ sub _parser {
         my $center_x = $width / 2 + $face_x;
         my $center_y = $height / 2 + $face_y;
 
+        # Maybe API bugs ??
+        if ( $left_eye_x == $right_eye_x ) {
+            $right_eye_y = $right_eye_y<$left_eye_y?$right_eye_y:$left_eye_y;
+            $left_eye_y  = $right_eye_y<$left_eye_y?$right_eye_y:$left_eye_y;
+        }
+
         $ave_width->add($width);
         $ave_height->add($height);
         push @{$face_data},
@@ -155,10 +160,10 @@ sub _parser {
             left_eye_y  => $left_eye_y,
             right_eye_x => $right_eye_x,
             right_eye_y => $right_eye_y,
-            left_eye_x  => $left_eye_x,
-            left_eye_y  => $left_eye_y,
-            right_eye_x => $right_eye_x,
-            right_eye_y => $right_eye_y,
+#            left_eye_x  => $left_eye_x,
+#            left_eye_y  => $left_eye_y,
+#            right_eye_x => $right_eye_x,
+#            right_eye_y => $right_eye_y,
             center_x    => $center_x,
             center_y    => $center_y,
           };
@@ -260,8 +265,8 @@ sub effect_face {
         my $ymax = 0;
         my $i    = abs( $f->{right_eye_y} - $f->{left_eye_y} );
         if ( $f->{left_eye_y} < $f->{right_eye_y} ) {
-            $ymax = $f->{right_eye_y} + $border_h;
             $ymin = $f->{left_eye_y} - $border_h;
+            $ymax = $f->{right_eye_y} + $border_h;
         }
         else {
             $ymin = $f->{right_eye_y} - $border_h;

@@ -17,7 +17,7 @@ if ( $ENV{KAO_API_KEY} ) {
     ok(  $kaolab->access(), 'WebService::Kaolabo access' );
     $kaolab->face_area();
     $kaolab->unface_area();
-    $kaolab->effect_face({type=>'box',color=>'#0000FF'});
+    $kaolab->effect_face({type=>'line',color=>'#0000FF'});
 
     my $face_data = $kaolab->face_data;
     for my $f ( @{$face_data} ){
